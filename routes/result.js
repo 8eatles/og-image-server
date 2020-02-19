@@ -12,11 +12,13 @@ router.post('/', async function (req, res, next) {
   try {
     const params = Object.assign({ title, description }, image);
     const result = await ImageMeta.create(params);
+    const host = `${req.connection.encrypted ? 'https' : 'http'}://${req.get('host')}`;
+	const imageSrc = `${host}/static${result.path.replace(/uploads/g, '').replace(/\\/g, '/')}`;
     res.render('result', {
-      url: `http://127.0.0.1:3000/og/${result.id}`,
+      url: `${host}/og/${result.id}`,
       title,
       description,
-      imageSrc: `http://127.0.0.1:3000/static${result.path.replace(/uploads/g, '').replace(/\\/g, '/')}`,
+      imageSrc,
     });
   } catch (e) {
     res.send(e.message);
